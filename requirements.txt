@@ -1,0 +1,11 @@
+crewai==0.105.0
+crewai-tools==0.37.0
+langchain-openai==0.3.8
+python-dotenv==0.19.0
+linkedin_api==2.3.1
+requests==2.32.3
+beautifulsoup4==4.13.3
+pydantic==2.10.4
+boto==2.49.0
+langchain-ollama==0.2.3
+ollama==0.4.7
