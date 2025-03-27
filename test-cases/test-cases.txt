@@ -1,0 +1,148 @@
+
+```markdown
+# Meta-Crew Project
+
+## Overview
+
+The Meta-Crew project is designed to generate and execute crews based on user requests. It includes functionalities for tool selection, custom tool creation, general code generation, and error handling.
+
+## Project Characteristics
+
+- **Languages**: Python
+- **Package Manager**: pip
+
+## Requirements
+
+Install the required packages using the following command:
+
+```bash
+pip install -r requirements.txt
+```
+
+### `requirements.txt`:
+
+```
+crewai
+crewai-tools
+langchain-openai
+python-dotenv
+linkedin_api
+requests
+beautifulsoup4
+```
+
+## Test Cases
+
+### Test Case 1: Crew Generation (Happy Path)
+
+**Input**: "I need a crew to summarize recent news articles about electric vehicles."
+
+**Expected Behavior**:
+- The `requirement_analyzer` identifies the need for web search and summarization.
+- The `agent_creator` creates agents like a "Researcher" and a "Summarizer".
+- The `task_creator` creates tasks like "Search for news articles" and "Summarize the articles".
+- The `tool_creator` selects `SerperDevTool` (assuming `SERPER_API_KEY` is set).
+- The `code_generator` generates a `generated_crew.py` file.
+- If the user enters "yes", the generated crew is executed (with a warning).
+- If the user enters "save", the generated crew is saved to `generated_crew.py`.
+
+**Verification**:
+- Check the console output for the steps of the flow.
+- Examine the `generated_crew.py` file (if saved) for reasonable agent and task definitions.
+- If executed, check for reasonable output (dependent on the LLM).
+
+### Test Case 2: Tool Selection
+
+**Input**: "I need a crew to get information from my LinkedIn network."
+
+**Expected Behavior**:
+- The `requirement_analyzer` identifies the need for LinkedIn interaction.
+- The `tool_creator` selects `linkedin_profile_search_tool` (assuming `LINKEDIN_USERNAME` and `LINKEDIN_PASSWORD` are set).
+- The generated code includes the LinkedIn tool.
+
+**Verification**:
+- Check the console output to see that `linkedin_profile_search_tool` is selected.
+- Examine the `generated_crew.py` file (if generated) to see if the LinkedIn tool is included.
+
+### Test Case 3: Custom Tool Creation (Conceptual)
+
+**Input**: "I need a tool to calculate the factorial of a number."
+
+**Expected Behavior**:
+- The `requirement_analyzer` identifies the need for a calculation tool.
+- The `tool_creator` does not find a suitable tool in `available_tools`.
+- The `tool_creator` returns a string starting with "CREATE_TOOL:".
+- The flow routes to the `create_custom_tool_step`.
+- The `create_custom_tool_step` is executed (though the code generation itself is a placeholder).
+- A file `tools/custom_tool_[uuid].py` is created (though its content will be a placeholder for now).
+
+**Verification**:
+- Check the console output to see that the flow reaches `create_custom_tool_step`.
+- Verify that a new file is created in the `tools` directory.
+- Check that the `DynamicToolCreator` output includes the "CREATE_TOOL:" prefix.
+
+### Test Case 4: General Code Generation
+
+**Input**: "Write a python function to create a hello world flask app"
+
+**Expected Behavior**:
+- The `requirement_analyzer` identifies this as a general code generation request.
+- The flow routes to the `generate_user_code_step`.
+- The `code_generator` agent generates Python code for a simple Flask app.
+- If the user enters "run", the code is executed (with a very strong warning).
+
+**Verification**:
+- Check the console output to see that the flow reaches `generate_user_code_step`.
+- Examine the generated code (either printed to the console or saved to a file).
+- If executed, verify that the code runs (and potentially serves a simple webpage - be very careful with this).
+
+### Test Case 5: Error Handling (Missing API Key)
+
+**Input**: "I need a crew to search for news articles."
+
+**Setup**: Unset the `SERPER_API_KEY` environment variable: `unset SERPER_API_KEY` (or the equivalent on your OS).
+
+**Expected Behavior**:
+- The `DynamicToolCreator` does not include `SerperDevTool` in the list of available tools.
+- The LLM does not select `SerperDevTool`.
+- The system either:
+  - Selects an alternative tool (if available and the LLM is smart enough).
+  - Triggers the custom tool creation path ("CREATE_TOOL:").
+  - Reports an error (if no suitable tools can be found or created).
+
+**Verification**:
+- Check the console output from `DynamicToolCreator` to see which tools are listed as available.
+- Verify that `SerperDevTool` is not selected.
+
+### Test Case 6: User Input Validation
+
+**Input**: Select an invalid number for the LLM selection.
+
+**Expected Behavior**:
+- The app prompts the user to enter a valid number.
+
+**Verification**:
+- Check the console output to see that the app prompts the user to enter a valid number.
+
+## How to Run the Tests
+
+You won't be able to run automated unit tests for most of this functionality because it relies heavily on LLM interaction and user input. These tests are primarily manual tests that you'll need to run and observe the output.
+
+1. **Set up your environment**: Make sure you have all the dependencies installed and your `.env` file is correctly configured (with your OpenAI key, and optionally LinkedIn credentials if you want to test the LinkedIn tool).
+2. **Run the application**: 
+   ```bash
+   python crew.py
+   ```
+3. **Provide the input**: Enter the input specified for each test case.
+4. **Observe the output**: Carefully examine the console output at each step of the flow. Check:
+   - That the requirements analysis is reasonable.
+   - That the correct agents and tasks are being created.
+   - That the `DynamicToolCreator` is selecting the expected tools (or signaling for tool creation).
+   - That the generated code (if you choose to save it) looks reasonable.
+   - That the flow routes correctly based on your input ("yes", "save", "run", "no").
+   - That error messages are displayed when appropriate (e.g., missing API keys).
+
+**"Run" option (with extreme caution)**: If you choose the "run" option, be absolutely certain you understand the risks. Review the generated code very carefully before running it. Ideally, run it in a sandboxed environment.
+
+By running these tests, you can verify that the core components of your Meta-Crew are working as expected and identify areas for improvement in your prompts, agent definitions, and flow logic. The most important next step is to implement the actual code generation logic in the `generate_code` task.
+```
