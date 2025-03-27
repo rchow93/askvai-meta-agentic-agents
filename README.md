@@ -2,6 +2,7 @@
 # AskVAI (https://www.askvai.com) - Using AI for Good 
 # CrewAI Meta-Crew: Dynamic AI Workflow Generation
 # Using Agentic Agents to Democratize AI for building a more Inclusive and Accessible World.
+*** Note this is still in development and not production ready. Working through a few issues. ***
 
 ## Overview
 
