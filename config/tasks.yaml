@@ -1,0 +1,64 @@
+analyze_requirements:
+  description: |
+    Analyze the following user request:
+    {user_input}
+    Identify the overall goal, the specific actions needed,
+    any required data sources, and the expected output format.
+  expected_output: A clear and concise summary of the user's requirements.
+  agent: requirement_analyzer
+
+create_agents:
+  description: |
+    Based on the requirements:
+    {requirements_summary}
+    Create the necessary agent definitions. Use the following prompt for each agent:
+    {agent_prompt}
+  expected_output: A list of agent definitions, including role, goal, backstory, and tools.
+  agent: agent_creator
+
+create_tasks:
+  description: |
+    Based on the requirements:
+    {requirements_summary}
+    and the agent definitions:
+    {agent_definitions}
+    Create the necessary tasks for the agents. Use the following prompt for each task:
+    {task_prompt}
+  expected_output: A list of task definitions, including description and expected output.
+  agent: task_creator
+
+select_tools:
+  description: |
+    Based on the requirements: {requirements_summary},
+    agent definitions: {agent_definitions}, and task definitions: {task_definitions},
+    select the necessary tools from the available tools list.  Return a comma-separated
+    list of tool names.
+  expected_output: A comma-separated list of tool names.
+  agent: tool_selector
+
+generate_code:
+  description: |
+    Generate a complete Python script that defines and executes
+    the CrewAI crew based on the following:
+    Agent Definitions: {agent_definitions}
+    Task Definitions: {task_definitions}
+    Tool Definitions: {tool_definitions}
+  expected_output: A complete, runnable Python script for the new crew.
+  agent: code_generator
+
+review_and_approve:
+  description: |
+    Review the proposed CrewAI crew and provide feedback.
+    User Requirements: {requirements}
+    Proposed Agents: {agents}
+    Proposed Tasks: {tasks}
+    Proposed Tools: {tools}
+    Generated Code: {code}
+
+    Provide a concise summary of the proposed crew, including the overall goal,
+    the agents and their roles, the tasks, and the selected tools.  Also
+    state whether the user approves the crew for execution ('yes'), wants to save
+    the code ('save'), or rejects it ('no').  If 'no', provide specific feedback
+    for improvement.
+  expected_output: A summary of the crew and a 'yes', 'save', or 'no' decision.
+  agent: crew_supervisor
